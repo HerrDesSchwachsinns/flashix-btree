@@ -1,8 +1,5 @@
-import datatypes.branch
 import datatypes.key
-import datatypes.zbranch
 import datatypes.znode
-import helpers.scala.ArrayWrapper
 import helpers.scala.ArrayWrapperDeep
 import helpers.scala.Boolean._
 import helpers.scala.Boolean
@@ -10,6 +7,9 @@ import helpers.scala.Int._
 import helpers.scala.Random._
 
 package object misc {
+  def isSmaller[T](x: T, y: T)(implicit o: Ordering[T])
+    = o.lt(x, y)
+
   /**
    * Unspecified sorts
    *
@@ -46,4 +46,8 @@ package object misc {
   import helpers.scala.Set.++
   def <(param0 : key, param1 : key) : Boolean = { param0.hashCode < param1.hashCode }
 
+  implicit object keyOrdering extends Ordering[key] {
+    def compare(key0: key, key1: key): Int
+      = key1.hashCode - key0.hashCode
+  }
 }
