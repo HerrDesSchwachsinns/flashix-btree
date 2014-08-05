@@ -44,6 +44,6 @@ package object misc {
   import helpers.scala.Int.plus1
   import helpers.scala.Set.Ø
   import helpers.scala.Set.++
-  def <(param0 : key, param1 : key) : Boolean = ???
+  def <(param0 : key, param1 : key) : Boolean = { param0.hashCode < param1.hashCode }
 
 }
