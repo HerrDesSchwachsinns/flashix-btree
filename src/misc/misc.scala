@@ -17,7 +17,7 @@ package object misc {
    * * uninterpreted sorts must be immutable
    */
   
-  type address = Byte
+  type address = Int
   def uninit_address() : address = ???
 
   /**
