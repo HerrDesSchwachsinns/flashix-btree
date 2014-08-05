@@ -50,4 +50,6 @@ package object misc {
     def compare(key0: key, key1: key): Int
       = key1.hashCode - key0.hashCode
   }
+  
+  val keyOrderingTest = implicitly[Ordering[key]]
 }
