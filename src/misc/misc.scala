@@ -29,9 +29,9 @@ package object misc {
   /**
    * Unspecified constants
    */
-  def ADR_DUMMY : address = ???
-  def BRANCH_SIZE : Int = ???
-  def MIN_SIZE : Int = ???
+  def ADR_DUMMY : address = 0
+  def BRANCH_SIZE : Int = 9
+  def MIN_SIZE : Int = 4
 
   /**
    * Unspecified functions
