@@ -5,6 +5,9 @@ import helpers.scala.Boolean._
 import helpers.scala.Boolean
 import helpers.scala.Int._
 import helpers.scala.Random._
+import layers.Btree
+import helpers.scala.MapWrapperDeep
+import datatypes.index_node
 
 package object misc {
   def isSmaller[T](x: T, y: T)(implicit o: Ordering[T]) = o.lt(x, y)
@@ -25,7 +28,8 @@ package object misc {
    */
   //no parent, no next, array of branches, leaf, not dirty, initial no elem used
   def default_znode: znode = new znode(null, null, new ArrayWrapperDeep(BRANCH_SIZE), true, false, 0)
-
+  //default znode, empty map
+  def empty_Btree: Btree = new Btree(default_znode,new MapWrapperDeep[address, index_node])
   /**
    * Unspecified constants
    */
