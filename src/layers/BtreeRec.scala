@@ -12,6 +12,9 @@ import misc.BRANCH_SIZE
 import misc.ADR_DUMMY
 
 class BtreeRec(private var ROOT: znode, private val FS: MapWrapperDeep[address, index_node]) extends BtreeBase(ROOT, FS) {
+  /**
+   * default initialization this is an empty Btree
+   */
   def this() = this(default_znode, new MapWrapperDeep[address, index_node])
   override def insert(KEY: key, ADR: address) {
     val FOUND = new Ref[Boolean](false)

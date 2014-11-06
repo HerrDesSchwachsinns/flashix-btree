@@ -17,7 +17,9 @@ import datatypes.branch
 import helpers.scala.ChooseNotin
 
 abstract class BtreeBase(private var ROOT: znode, private val FS: MapWrapperDeep[address, index_node]) extends IBtree {
-  //default initialization
+  /**
+   * default initialization this is an empty Btree
+   */
   def this() = this(default_znode, new MapWrapperDeep[address, index_node])
 
   /*
@@ -52,6 +54,9 @@ abstract class BtreeBase(private var ROOT: znode, private val FS: MapWrapperDeep
         FS(ADR0) = IND.deepCopy
       })
   }
+  /**
+   * convert a zbranch array to a branch array
+   */
   private def zbranchesToBranches(ZBRAR: ArrayWrapperDeep[zbranch], BRAR: ArrayWrapperDeep[branch]) {
     BRAR := new ArrayWrapperDeep[branch](ZBRAR.length)
     val I: Int = 0
@@ -65,8 +70,7 @@ abstract class BtreeBase(private var ROOT: znode, private val FS: MapWrapperDeep
    * insert
    * **************
    */
-  //used in insert & split
-  protected def insert_branch(R: znode, CHILD: znode, KEY: key, ADR: address) {
+  protected def insert_branch(R: znode, CHILD: znode, KEY: key, ADR: address) { //used in insert & split
     var I: Int = if (R.leaf) 0 else 1
     while (I < R.usedsize) {
       if (<(KEY, R.zbranches(I).key)) {
@@ -81,8 +85,7 @@ abstract class BtreeBase(private var ROOT: znode, private val FS: MapWrapperDeep
         I = I + 1
     }
   }
-  //used in insert
-  protected def split(R: znode, CHILD: znode, KEY: key, ADR: address, R0: Ref[znode]) {
+  protected def split(R: znode, CHILD: znode, KEY: key, ADR: address, R0: Ref[znode]) { //used in insert
     val R1: znode = misc.default_znode
     R0 := R1
     R0.get.leaf = R.leaf
@@ -135,8 +138,7 @@ abstract class BtreeBase(private var ROOT: znode, private val FS: MapWrapperDeep
    * delete
    * **************
    */
-  //used in delete
-  protected def delete_branch(R: znode, KEY: key) {
+  protected def delete_branch(R: znode, KEY: key) { //used in delete
     val POS = new Ref[Int](0)
     searchPosition(R, KEY, POS.get)
     move_branches_left(R, POS.get)
@@ -153,8 +155,7 @@ abstract class BtreeBase(private var ROOT: znode, private val FS: MapWrapperDeep
       J = J + 1
     }
   }
-  //used in delete
-  protected def merge(RL: znode, RR: znode) {
+  protected def merge(RL: znode, RR: znode) { //used in delete
     var I: Int = 0
     val POS = new Ref[Int](0)
     getPosition(RR, POS.get)
@@ -168,8 +169,7 @@ abstract class BtreeBase(private var ROOT: znode, private val FS: MapWrapperDeep
     if (RL.parent == ROOT && ROOT.usedsize == 2)
       ROOT = RL
   }
-  //used in delete
-  protected def move_from_left(R: znode, RL: znode) {
+  protected def move_from_left(R: znode, RL: znode) { //used in delete
     move_branches_right(R, 0)
     R.zbranches(0) = RL.zbranches(RL.usedsize - 1).deepCopy
     R.usedsize = R.usedsize + 1
@@ -180,8 +180,7 @@ abstract class BtreeBase(private var ROOT: znode, private val FS: MapWrapperDeep
     R.zbranches(1).key = R.parent.zbranches(POS.get).key
     R.parent.zbranches(POS.get).key = RL.zbranches(RL.usedsize - 1).key
   }
-  //used in delete
-  protected def move_from_right(R: znode, RR: znode) {
+  protected def move_from_right(R: znode, RR: znode) { //used in delete
     R.zbranches(R.usedsize) = RR.zbranches(0).deepCopy
     move_branches_left(RR, 0)
     R.usedsize = R.usedsize + 1
@@ -198,8 +197,7 @@ abstract class BtreeBase(private var ROOT: znode, private val FS: MapWrapperDeep
    * lookup helper
    * **************
    */
-  //used in delete and insert
-  protected def lookup_loop(KEY: key, R: Ref[znode], ADR: Ref[address], FOUND: Ref[Boolean]) {
+  protected def lookup_loop(KEY: key, R: Ref[znode], ADR: Ref[address], FOUND: Ref[Boolean]) { //used in delete and insert
     FOUND := false
     var I: Int = 0
     while (!R.get.leaf) {
@@ -229,8 +227,7 @@ abstract class BtreeBase(private var ROOT: znode, private val FS: MapWrapperDeep
    * branch helper
    * **************
    */
-  //used in delete & lookup_loop
-  protected def check_branch(R: znode, I: Int) {
+  protected def check_branch(R: znode, I: Int) { //used in delete & lookup_loop
     val ZBR: zbranch = R.zbranches(I).deepCopy
     if (ZBR.child == null) {
       val ZBR0: Ref[znode] = ZBR.child
@@ -258,21 +255,27 @@ abstract class BtreeBase(private var ROOT: znode, private val FS: MapWrapperDeep
     }
   }
 
-  //used in {insert,delete}_branch
-  private def mark_dirty(__R: znode) {
+  /**
+   * mark znode dirty, used if node 	changed (insert or delete)
+   */
+  private def mark_dirty(__R: znode) { //used in {insert,delete}_branch
     var R = __R
     while (R != null && !R.dirty) {
       R.dirty = true
       R = R.parent
     }
   }
-
-  //used in delete & merge & move_from_{left,right}
-  protected def getPosition(R: znode, POS: Ref[Int]) {
+  /**
+   * get position in zbranch of parent
+   */
+  protected def getPosition(R: znode, POS: Ref[Int]) { //used in delete & merge & move_from_{left,right}
     val KEY = new Ref[key](null)
     val ADR = new Ref[address](misc.uninit_address())
     getParameter(R, POS.get, ADR.get, KEY.get)
   }
+  /**
+   * collect information about a znode that is saved in its parent.
+   */
   private def getParameter(R: znode, POS: Ref[Int], ADR: Ref[address], KEY: Ref[key]) {
     var I: Int = 0
     if (R.parent != null)
@@ -285,17 +288,14 @@ abstract class BtreeBase(private var ROOT: znode, private val FS: MapWrapperDeep
         }
       }
   }
-
-  //used in delete_branch & move_from_right
-  protected def move_branches_left(R: znode, __I: Int) {
+  protected def move_branches_left(R: znode, __I: Int) { //used in delete_branch & move_from_right
     var I = __I
     while (I < R.usedsize - 1) {
       R.zbranches(I) = R.zbranches(I + 1).deepCopy
       I = I + 1
     }
   }
-  //used in insert_branch & move_from_left
-  protected def move_branches_right(R: znode, I: Int) {
+  protected def move_branches_right(R: znode, I: Int) { //used in insert_branch & move_from_left
     var J: Int = R.usedsize
     while (J >= I) {
       R.zbranches(J + 1) = R.zbranches(J).deepCopy
