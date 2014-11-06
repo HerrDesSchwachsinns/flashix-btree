@@ -181,7 +181,7 @@ class Btree(private var ROOT : znode, private val FS : MapWrapperDeep[address, i
   }
   def insert(KEY : key, ADR : address)  {
     val FOUND = new Ref[Boolean](false)
-    val R = new Ref[znode](null)
+    val R = new Ref[znode](ROOT)
     val ADR0 = new Ref[address](misc.uninit_address())
     lookup_loop(KEY, R.get, ADR0.get, FOUND.get)
     if (FOUND.get != true) {
