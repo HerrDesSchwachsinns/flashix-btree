@@ -211,7 +211,7 @@ abstract class BtreeBase(private var ROOT: znode, private val FS: MapWrapperDeep
     lookup_leaf(KEY, R.get, ADR.get, FOUND.get)
   }
 
-  private def lookup_leaf(KEY: key, R: znode, ADR: Ref[address], FOUND: Ref[Boolean]) {
+  protected def lookup_leaf(KEY: key, R: znode, ADR: Ref[address], FOUND: Ref[Boolean]) {
     var I: Int = 0
     while (I < R.usedsize && FOUND.get != true) {
       if (R.zbranches(I).key == KEY) {

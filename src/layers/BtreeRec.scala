@@ -10,6 +10,7 @@ import misc.address
 import misc.MIN_SIZE
 import misc.BRANCH_SIZE
 import misc.ADR_DUMMY
+import misc.<
 
 class BtreeRec(private var ROOT: znode, private val FS: MapWrapperDeep[address, index_node]) extends BtreeBase(ROOT, FS) {
   /**
@@ -34,7 +35,10 @@ class BtreeRec(private var ROOT: znode, private val FS: MapWrapperDeep[address, 
       delete_rec(R.get, KEY)
     }
   }
-  override def lookup(KEY: key, ADR: Ref[address], FOUND: Ref[Boolean]) = ???
+  override def lookup(KEY: key, ADR: Ref[address], FOUND: Ref[Boolean]) {
+    val R = new Ref[znode](ROOT)
+    lookup_impl(KEY, R, ADR, FOUND)
+  }
 
   private def insert_rec(R: znode, CHILD: znode, KEY: key, ADR: address) {
     if (R.usedsize < BRANCH_SIZE) {
@@ -85,6 +89,32 @@ class BtreeRec(private var ROOT: znode, private val FS: MapWrapperDeep[address, 
         }
         DONE = true
       }
+    }
+  }
+  private def lookup_impl(KEY: key, R: Ref[znode], ADR: Ref[address], FOUND: Ref[Boolean]) {
+    FOUND := false
+    if (R.get.leaf) {
+      lookup_leaf(KEY, R.get, ADR.get, FOUND.get)
+    } else {
+      lookup_rec(KEY, R.get, ADR.get, FOUND.get)
+    }
+  }
+  private def lookup_rec(KEY: key, R: Ref[znode], ADR: Ref[address], FOUND: Ref[Boolean]) {
+    var I: Int = 0
+    while (I < R.get.usedsize - 1 && FOUND.get != true) {
+      if (! <(R.get.zbranches(I + 1).key, KEY)) {
+        check_branch(R.get, I)
+        val RTEMP = new Ref[znode](R.get.zbranches(I).child)
+        lookup_impl(KEY, RTEMP.get, ADR.get, FOUND.get)
+        R.get.zbranches(I).child = RTEMP.get
+      }
+      I = I + 1
+    }
+    if (<(R.get.zbranches(I).key, KEY) && I == R.get.usedsize) {
+      check_branch(R.get, I)
+      val RTEMP = new Ref[znode](R.get.zbranches(I).child)
+      lookup_impl(KEY, RTEMP.get, ADR.get, FOUND.get)
+      R.get.zbranches(I).child = RTEMP.get
     }
   }
 }

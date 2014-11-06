@@ -34,7 +34,11 @@ class BtreeIter(private var ROOT: znode, private val FS: MapWrapperDeep[address,
       delete_loop(R.get, KEY)
     }
   }
-  override def lookup(KEY: key, ADR: Ref[address], FOUND: Ref[Boolean]) = ???
+  override def lookup(KEY: key, ADR: Ref[address], FOUND: Ref[Boolean]) {
+    val FOUND = new Ref[Boolean](false)
+    val R = new Ref[znode](null)
+    lookup_loop(KEY, R, ADR, FOUND)
+  }
 
   private def insert_loop(__R: znode, __CHILD: znode, __KEY: key, __ADR: address) {
     var ADR = __ADR
