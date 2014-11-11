@@ -28,7 +28,7 @@ class BtreeRec(private var ROOT: znode, private val FS: MapWrapperDeep[address, 
   }
   override def delete(KEY: key) {
     val FOUND = new Ref[Boolean](false)
-    val R = new Ref[znode](null)
+    val R = new Ref[znode](ROOT)
     val ADR = new Ref[address](misc.uninit_address())
     lookup_rec(KEY, R.get, ADR.get, FOUND.get)
     if (FOUND.get) {

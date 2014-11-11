@@ -19,7 +19,7 @@ class BtreeIter(private var ROOT: znode, private val FS: MapWrapperDeep[address,
   def this() = this(default_znode, new MapWrapperDeep[address, index_node])
   override def insert(KEY: key, ADR: address) {
     val FOUND = new Ref[Boolean](false)
-    val R = new Ref[znode](null)
+    val R = new Ref[znode](ROOT)
     val ADR0 = new Ref[address](misc.uninit_address())
     lookup_loop(KEY, R.get, ADR0.get, FOUND.get)
     if (FOUND.get != true) {
@@ -28,7 +28,7 @@ class BtreeIter(private var ROOT: znode, private val FS: MapWrapperDeep[address,
   }
   override def delete(KEY: key) {
     val FOUND = new Ref[Boolean](false)
-    val R = new Ref[znode](null)
+    val R = new Ref[znode](ROOT)
     val ADR = new Ref[address](misc.uninit_address())
     lookup_loop(KEY, R.get, ADR.get, FOUND.get)
     if (FOUND.get) {
@@ -37,7 +37,7 @@ class BtreeIter(private var ROOT: znode, private val FS: MapWrapperDeep[address,
   }
   override def lookup(KEY: key, ADR: Ref[address], FOUND: Ref[Boolean]) {
     val FOUND = new Ref[Boolean](false)
-    val R = new Ref[znode](null)
+    val R = new Ref[znode](ROOT)
     lookup_loop(KEY, R, ADR, FOUND)
   }
   
