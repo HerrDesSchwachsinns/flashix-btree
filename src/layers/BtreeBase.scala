@@ -201,20 +201,6 @@ abstract class BtreeBase(private var ROOT: znode, private val FS: MapWrapperDeep
    * lookup helper
    * **************
    */
-  protected def lookup_loop(KEY: key, R: Ref[znode], ADR: Ref[address], FOUND: Ref[Boolean]) { //used in delete and insert
-    FOUND := false
-    var I: Int = 0
-    while (!R.get.leaf) {
-      if (I == R.get.usedsize || ! <(R.get.zbranches(I + 1).key, KEY)) {
-        check_branch(R.get, I)
-        R := R.get.zbranches(I).child
-        I = 0
-      } else
-        I = I + 1
-    }
-    lookup_leaf(KEY, R.get, ADR.get, FOUND.get)
-  }
-
   protected def lookup_leaf(KEY: key, R: znode, ADR: Ref[address], FOUND: Ref[Boolean]) {
     var I: Int = 0
     while (I < R.usedsize && FOUND.get != true) {

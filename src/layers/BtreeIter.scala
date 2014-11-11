@@ -10,6 +10,7 @@ import misc.address
 import misc.ADR_DUMMY
 import misc.BRANCH_SIZE
 import misc.MIN_SIZE
+import misc.<
 
 class BtreeIter(private var ROOT: znode, private val FS: MapWrapperDeep[address, index_node]) extends BtreeBase(ROOT, FS) {
   /**
@@ -38,6 +39,20 @@ class BtreeIter(private var ROOT: znode, private val FS: MapWrapperDeep[address,
     val FOUND = new Ref[Boolean](false)
     val R = new Ref[znode](null)
     lookup_loop(KEY, R, ADR, FOUND)
+  }
+  
+    private def lookup_loop(KEY: key, R: Ref[znode], ADR: Ref[address], FOUND: Ref[Boolean]) { //used in delete and insert
+    FOUND := false
+    var I: Int = 0
+    while (!R.get.leaf) {
+      if (I == R.get.usedsize || ! <(R.get.zbranches(I + 1).key, KEY)) {
+        check_branch(R.get, I)
+        R := R.get.zbranches(I).child
+        I = 0
+      } else
+        I = I + 1
+    }
+    lookup_leaf(KEY, R.get, ADR.get, FOUND.get)
   }
 
   private def insert_loop(__R: znode, __CHILD: znode, __KEY: key, __ADR: address) {
