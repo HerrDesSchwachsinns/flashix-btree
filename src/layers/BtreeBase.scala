@@ -1,20 +1,21 @@
 package layers
 
+import datatypes.branch
+import datatypes.index_node
+import datatypes.key
+import datatypes.zbranch
 import datatypes.znode
+import helpers.scala.ArrayWrapperDeep
+import helpers.scala.ChooseNotin
 import helpers.scala.MapWrapperDeep
-import misc.address
-import misc.default_znode
+import helpers.scala.Ref
+import helpers.scala.Ref.fromA
+import misc.{< => <}
 import misc.ADR_DUMMY
 import misc.BRANCH_SIZE
 import misc.MIN_SIZE
-import misc.<
-import datatypes.index_node
-import datatypes.zbranch
-import datatypes.key
-import helpers.scala.Ref
-import helpers.scala.ArrayWrapperDeep
-import datatypes.branch
-import helpers.scala.ChooseNotin
+import misc.address
+import misc.default_znode
 
 abstract class BtreeBase(private var ROOT: znode, private val FS: MapWrapperDeep[address, index_node]) extends IBtree {
   /**
@@ -43,6 +44,9 @@ abstract class BtreeBase(private var ROOT: znode, private val FS: MapWrapperDeep
     saveIndexnode(ROOT, ADR.get)
     ROOT.dirty = false
   }
+  /**
+   * saves node referenced by R into FS at ADR
+   */
   private def saveIndexnode(R: znode, ADR: Ref[address]) {
     val IND: index_node = null
     ChooseNotin((FS).keys.toSeq, (ADR0: address) =>
@@ -55,7 +59,7 @@ abstract class BtreeBase(private var ROOT: znode, private val FS: MapWrapperDeep
       })
   }
   /**
-   * convert a zbranch array to a branch array
+   * converts a zbranch array to a branch array
    */
   private def zbranchesToBranches(ZBRAR: ArrayWrapperDeep[zbranch], BRAR: ArrayWrapperDeep[branch]) {
     BRAR := new ArrayWrapperDeep[branch](ZBRAR.length)
@@ -227,6 +231,9 @@ abstract class BtreeBase(private var ROOT: znode, private val FS: MapWrapperDeep
    * branch helper
    * **************
    */
+  /**
+   * checks if i-th branch already loaded if not it is loaded
+   */
   protected def check_branch(R: znode, I: Int) { //used in delete & lookup_loop
     val ZBR: zbranch = R.zbranches(I).deepCopy
     if (ZBR.child == null) {
@@ -237,6 +244,9 @@ abstract class BtreeBase(private var ROOT: znode, private val FS: MapWrapperDeep
       R.zbranches(I) = ZBR.deepCopy
     }
   }
+  /**
+   * lode node from FS at ADR into R
+   */
   private def loadIndexnode(ADR: address, R: Ref[znode]) {
     val R0: Ref[znode] = misc.default_znode
     branchesToZbranches(FS(ADR).branches, R0.get.zbranches)
@@ -247,6 +257,9 @@ abstract class BtreeBase(private var ROOT: znode, private val FS: MapWrapperDeep
     R0.get.usedsize = FS(ADR).usedsize
     R := R0.get
   }
+  /**
+   * convert branch array BRAR into a zbranch array saving result in ZBRAR
+   */
   private def branchesToZbranches(BRAR: ArrayWrapperDeep[branch], ZBRAR: ArrayWrapperDeep[zbranch]) {
     ZBRAR := new ArrayWrapperDeep[zbranch](BRAR.length)
     val I: Int = 0
@@ -266,7 +279,7 @@ abstract class BtreeBase(private var ROOT: znode, private val FS: MapWrapperDeep
     }
   }
   /**
-   * get position in zbranch of parent
+   * return position in zbranch array of parent of R
    */
   protected def getPosition(R: znode, POS: Ref[Int]) { //used in delete & merge & move_from_{left,right}
     val KEY = new Ref[key](null)
@@ -274,7 +287,7 @@ abstract class BtreeBase(private var ROOT: znode, private val FS: MapWrapperDeep
     getParameter(R, POS.get, ADR.get, KEY.get)
   }
   /**
-   * collect information about a znode that is saved in its parent.
+   * collect information about a znode that is saved in its parent (key, adr, position).
    */
   private def getParameter(R: znode, POS: Ref[Int], ADR: Ref[address], KEY: Ref[key]) {
     var I: Int = 0
