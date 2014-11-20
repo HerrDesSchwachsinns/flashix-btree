@@ -17,7 +17,7 @@ import misc.MIN_SIZE
 import misc.address
 import misc.default_znode
 
-abstract class BtreeBase(private var ROOT: znode, private val FS: MapWrapperDeep[address, index_node]) extends IBtree {
+abstract class BtreeBase(protected var ROOT: znode, protected val FS: MapWrapperDeep[address, index_node]) extends IBtree {
   /**
    * default initialization this is an empty Btree
    */

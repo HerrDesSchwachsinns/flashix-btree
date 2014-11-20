@@ -5,18 +5,15 @@ import datatypes.key
 import datatypes.znode
 import helpers.scala.MapWrapperDeep
 import helpers.scala.Ref
-import misc.default_znode
-import misc.address
-import misc.MIN_SIZE
-import misc.BRANCH_SIZE
+import helpers.scala.Ref.fromA
+import misc.{< => <}
 import misc.ADR_DUMMY
-import misc.<
+import misc.BRANCH_SIZE
+import misc.MIN_SIZE
+import misc.address
+import misc.default_znode
 
-class BtreeRec(private var ROOT: znode, private val FS: MapWrapperDeep[address, index_node]) extends BtreeBase(ROOT, FS) {
-  /**
-   * default initialization this is an empty Btree
-   */
-  def this() = this(default_znode, new MapWrapperDeep[address, index_node])
+class BtreeRec() extends BtreeBase() {
   override def insert(KEY: key, ADR: address) {
     val FOUND = new Ref[Boolean](false)
     val R = new Ref[znode](ROOT)
