@@ -11,19 +11,14 @@ import misc.ADR_DUMMY
 
 object TestInsert {
   def main(args: Array[String]) {
-    val map = new BtreeMap
-    map.insert(inodekey(1), 1)
-    val found = new Ref[Boolean](false)
-    val adr = new Ref[address](ADR_DUMMY)
-    map.lookup(inodekey(1), adr, found)
-    println(found.get)
-    map.delete(inodekey(1))
-    map.lookup(inodekey(1), adr, found)
-    println(found.get)
-//    val treeIter = new BtreeIter
-//    test(treeIter)
-//    val treeRec = new BtreeRec
-//    test(treeRec)
+    val treeIter = new BtreeIter
+    println("iterative version started")
+    test(treeIter)
+    println("iterative version finished")
+    println("recursive version started")
+    val treeRec = new BtreeRec
+    test(treeRec)
+    println("recursive version finished")
   }
   def test(btree: BtreeBase) {
 	  btree.insert(inodekey(1),1)
