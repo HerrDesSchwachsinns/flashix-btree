@@ -21,7 +21,7 @@ class BtreeRec(private var ROOT: znode, private val FS: MapWrapperDeep[address, 
     val FOUND = new Ref[Boolean](false)
     val R = new Ref[znode](ROOT)
     val ADR0 = new Ref[address](misc.uninit_address())
-    lookup_rec(KEY, R.get, ADR0.get, FOUND.get)
+    lookup_impl(KEY, R.get, ADR0.get, FOUND.get)
     if (FOUND.get != true) {
       insert_rec(R.get, null, KEY, ADR)
     }
@@ -30,7 +30,7 @@ class BtreeRec(private var ROOT: znode, private val FS: MapWrapperDeep[address, 
     val FOUND = new Ref[Boolean](false)
     val R = new Ref[znode](ROOT)
     val ADR = new Ref[address](misc.uninit_address())
-    lookup_rec(KEY, R.get, ADR.get, FOUND.get)
+    lookup_impl(KEY, R.get, ADR.get, FOUND.get)
     if (FOUND.get) {
       delete_rec(R.get, KEY)
     }
