@@ -16,6 +16,9 @@ sealed abstract class ArrayWrapperBase[T] protected (var array: Array[T]) {
   def :=(wrapper: ArrayWrapperBase[T]) {
     array = wrapper.array
   }
+  override def toString(): String = {
+    array.toString()
+  }
 
 }
 
