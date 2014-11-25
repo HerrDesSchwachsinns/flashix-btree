@@ -91,7 +91,7 @@ class BtreeRec() extends BtreeBase() {
   private def lookup_impl(KEY: key, R: Ref[znode], ADR: Ref[address], FOUND: Ref[Boolean]) {
     FOUND := false
     if (R.get.leaf) {
-      lookup_leaf(KEY, R.get, ADR.get, FOUND.get)
+      lookup_leaf(KEY, R.get, ADR, FOUND)
     } else {
       lookup_rec(KEY, R.get, ADR.get, FOUND.get)
     }

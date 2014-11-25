@@ -11,7 +11,7 @@ import misc.ADR_DUMMY
 import misc.BRANCH_SIZE
 import misc.MIN_SIZE
 import misc.<
-
+import misc.uninit_address
 class BtreeIter() extends BtreeBase() {
   override def insert(KEY: key, ADR: address) {
     val FOUND = new Ref[Boolean](false)
@@ -32,7 +32,6 @@ class BtreeIter() extends BtreeBase() {
     }
   }
   override def lookup(KEY: key, ADR: Ref[address], FOUND: Ref[Boolean]) {
-    val FOUND = new Ref[Boolean](false)
     val R = new Ref[znode](ROOT)
     lookup_loop(KEY, R, ADR, FOUND)
   }
@@ -48,7 +47,7 @@ class BtreeIter() extends BtreeBase() {
       } else
         I = I + 1
     }
-    lookup_leaf(KEY, R.get, ADR.get, FOUND.get)
+    lookup_leaf(KEY, R.get, ADR, FOUND)
   }
 
   private def insert_loop(__R: znode, __CHILD: znode, __KEY: key, __ADR: address) {
