@@ -17,7 +17,7 @@ sealed abstract class ArrayWrapperBase[T] protected (var array: Array[T]) {
     array = wrapper.array
   }
   override def toString(): String = {
-    array.toString()
+    array.mkString("[",", ","]")
   }
 
 }

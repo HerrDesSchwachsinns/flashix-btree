@@ -16,8 +16,13 @@ import misc.BRANCH_SIZE
 import misc.MIN_SIZE
 import misc.address
 import misc.default_znode
+import datatypes.key.inodekey
+
 
 abstract class BtreeBase(protected var ROOT: znode, protected val FS: MapWrapperDeep[address, index_node]) extends IBtree {
+  ROOT.zbranches(0).key = inodekey(0)
+  ROOT.zbranches(0).adr = 0
+  ROOT.usedsize = 1;
   /**
    * default initialization this is an empty Btree
    */
@@ -75,7 +80,7 @@ abstract class BtreeBase(protected var ROOT: znode, protected val FS: MapWrapper
    * **************
    */
   protected def insert_branch(R: znode, CHILD: znode, KEY: key, ADR: address) { //used in insert & split
-    var I: Int = if (R.leaf) 0 else 1
+    var I: Int = if (R.leaf) 0 else 1 //dummy node
     while (I < R.usedsize) {
       if (<(KEY, R.zbranches(I).key)) {
         move_branches_right(R, I)
@@ -83,11 +88,14 @@ abstract class BtreeBase(protected var ROOT: znode, protected val FS: MapWrapper
         R.usedsize = R.usedsize + 1
         if (R.leaf) {
           mark_dirty(R)
+        } else {
+          assert(R.dirty)
         }
         I = R.usedsize
       } else
         I = I + 1
     }
+    //TODO if rightmost insert here
   }
   protected def split(R: znode, CHILD: znode, KEY: key, ADR: address, R0: Ref[znode]) { //used in insert
     val R1: znode = misc.default_znode

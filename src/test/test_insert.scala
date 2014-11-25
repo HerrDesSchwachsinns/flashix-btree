@@ -1,13 +1,9 @@
 package test
 
-import layers.BtreeBase
+import datatypes.key.inodekey
 import layers.BtreeIter
 import layers.BtreeRec
-import datatypes.key.inodekey
-import layers.BtreeMap
-import helpers.scala.Ref
-import misc.address
-import misc.ADR_DUMMY
+import layers.IBtree
 
 object TestInsert {
   def main(args: Array[String]) {
@@ -20,7 +16,16 @@ object TestInsert {
     test(treeRec)
     println("recursive version finished")
   }
-  def test(btree: BtreeBase) {
-	  btree.insert(inodekey(1),1)
+  def test(btree: IBtree) {
+    test_insert_lookup_delete(btree)
+  }
+  def test_insert(btree: IBtree) {
+    Helper.insert(btree, 1)
+  }
+  def test_insert_lookup_delete(btree: IBtree) {
+    Helper.insert(btree, 1)
+    println(Helper.lookup(btree, 1))
+    Helper.delete(btree,1)
+    println(Helper.lookup(btree, 1))
   }
 }
