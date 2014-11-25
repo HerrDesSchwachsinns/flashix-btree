@@ -36,14 +36,14 @@ abstract class BtreeBase(protected var ROOT: znode, protected val FS: MapWrapper
         var I: Int = 0
         while (I < ROOT.usedsize) {
           if (ROOT.zbranches(I).child.dirty) {
-            commit(ROOT.zbranches(I).child, ADR.get)
+            commit(ROOT.zbranches(I).child, ADR)
             ROOT.zbranches(I).adr = ADR.get
           }
           I = I + 1
         }
       }
     }
-    saveIndexnode(ROOT, ADR.get)
+    saveIndexnode(ROOT, ADR)
     ROOT.dirty = false
   }
   /**
@@ -152,7 +152,7 @@ abstract class BtreeBase(protected var ROOT: znode, protected val FS: MapWrapper
    */
   protected def delete_branch(R: znode, KEY: key) { //used in delete
     val POS = new Ref[Int](0)
-    searchPosition(R, KEY, POS.get)
+    searchPosition(R, KEY, POS)
     move_branches_left(R, POS.get)
     R.usedsize = R.usedsize - 1
     mark_dirty(R)
@@ -170,7 +170,7 @@ abstract class BtreeBase(protected var ROOT: znode, protected val FS: MapWrapper
   protected def merge(RL: znode, RR: znode) { //used in delete
     var I: Int = 0
     val POS = new Ref[Int](0)
-    getPosition(RR, POS.get)
+    getPosition(RR, POS)
     RR.zbranches(0).key = RR.parent.zbranches(POS.get).key
     while (I < RR.usedsize) {
       RL.zbranches(RL.usedsize) = RR.zbranches(I).deepCopy
@@ -188,7 +188,7 @@ abstract class BtreeBase(protected var ROOT: znode, protected val FS: MapWrapper
     RL.usedsize = RL.usedsize - 1
     RL.dirty = true
     val POS = new Ref[Int](0)
-    getPosition(R, POS.get)
+    getPosition(R, POS)
     R.zbranches(1).key = R.parent.zbranches(POS.get).key
     R.parent.zbranches(POS.get).key = RL.zbranches(RL.usedsize - 1).key
   }
@@ -199,7 +199,7 @@ abstract class BtreeBase(protected var ROOT: znode, protected val FS: MapWrapper
     RR.usedsize = RR.usedsize - 1
     RR.dirty = true
     val POS = new Ref[Int](0)
-    getPosition(RR, POS.get)
+    getPosition(RR, POS)
     R.zbranches(R.usedsize - 1).key = RR.parent.zbranches(POS.get).key
     RR.parent.zbranches(POS.get).key = RR.zbranches(0).key
   }
@@ -242,7 +242,7 @@ abstract class BtreeBase(protected var ROOT: znode, protected val FS: MapWrapper
    * lode node from FS at ADR into R
    */
   private def loadIndexnode(ADR: address, R: Ref[znode]) {
-    val R0: Ref[znode] = misc.default_znode
+    val R0: Ref[znode] = new Ref(misc.default_znode)
     branchesToZbranches(FS(ADR).branches, R0.get.zbranches)
     R0.get.parent = null
     R0.get.next = null
@@ -278,7 +278,7 @@ abstract class BtreeBase(protected var ROOT: znode, protected val FS: MapWrapper
   protected def getPosition(R: znode, POS: Ref[Int]) { //used in delete & merge & move_from_{left,right}
     val KEY = new Ref[key](null)
     val ADR = new Ref[address](misc.uninit_address())
-    getParameter(R, POS.get, ADR.get, KEY.get)
+    getParameter(R, POS, ADR, KEY)
   }
   /**
    * collect information about a znode that is saved in its parent (key, adr, position).

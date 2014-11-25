@@ -17,7 +17,7 @@ class BtreeIter() extends BtreeBase() {
     val FOUND = new Ref[Boolean](false)
     val R = new Ref[znode](ROOT)
     val ADR0 = new Ref[address](misc.uninit_address())
-    lookup_loop(KEY, R.get, ADR0.get, FOUND.get)
+    lookup_loop(KEY, R, ADR0, FOUND)
     if (FOUND.get != true) {
       insert_loop(R.get, null, KEY, ADR)
     }
@@ -26,7 +26,7 @@ class BtreeIter() extends BtreeBase() {
     val FOUND = new Ref[Boolean](false)
     val R = new Ref[znode](ROOT)
     val ADR = new Ref[address](misc.uninit_address())
-    lookup_loop(KEY, R.get, ADR.get, FOUND.get)
+    lookup_loop(KEY, R, ADR, FOUND)
     if (FOUND.get) {
       delete_loop(R.get, KEY)
     }
@@ -62,7 +62,7 @@ class BtreeIter() extends BtreeBase() {
         DONE = true
       } else {
         val R0 = new Ref[znode](null)
-        split(R, CHILD, KEY, ADR, R0.get)
+        split(R, CHILD, KEY, ADR, R0)
         if (R.parent == null)
           DONE = true
         else {
@@ -85,7 +85,7 @@ class BtreeIter() extends BtreeBase() {
       delete_branch(R, KEY)
       if (R.parent != null && R.usedsize < MIN_SIZE) {
         val POS = new Ref[Int](0)
-        getPosition(R, POS.get)
+        getPosition(R, POS)
         if (POS.get > 0) {
           check_branch(R.parent, POS.get - 1)
           if (R.parent.zbranches(POS.get - 1).child.usedsize >= MIN_SIZE + 1) {

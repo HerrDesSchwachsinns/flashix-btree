@@ -18,7 +18,7 @@ class BtreeRec() extends BtreeBase() {
     val FOUND = new Ref[Boolean](false)
     val R = new Ref[znode](ROOT)
     val ADR0 = new Ref[address](misc.uninit_address())
-    lookup_impl(KEY, R.get, ADR0.get, FOUND.get)
+    lookup_impl(KEY, R, ADR0, FOUND)
     if (FOUND.get != true) {
       insert_rec(R.get, null, KEY, ADR)
     }
@@ -27,7 +27,7 @@ class BtreeRec() extends BtreeBase() {
     val FOUND = new Ref[Boolean](false)
     val R = new Ref[znode](ROOT)
     val ADR = new Ref[address](misc.uninit_address())
-    lookup_impl(KEY, R.get, ADR.get, FOUND.get)
+    lookup_impl(KEY, R, ADR, FOUND)
     if (FOUND.get) {
       delete_rec(R.get, KEY)
     }
@@ -42,7 +42,7 @@ class BtreeRec() extends BtreeBase() {
       insert_branch(R, CHILD, KEY, ADR)
     } else {
       val R0 = new Ref[znode](null)
-      split(R, CHILD, KEY, ADR, R0.get)
+      split(R, CHILD, KEY, ADR, R0)
       if (R.parent != null) {
         if (R0.get.leaf) {
           insert_rec(R.parent, R0.get, R.zbranches(R.usedsize - 1).key, ADR_DUMMY)
@@ -57,7 +57,7 @@ class BtreeRec() extends BtreeBase() {
     if (R.parent != null && R.usedsize < MIN_SIZE) {
       var DONE: Boolean = false
       val POS = new Ref[Int](0)
-      getPosition(R, POS.get)
+      getPosition(R, POS)
       if (POS.get > 0) {
         check_branch(R.parent, POS.get - 1)
         if (R.parent.zbranches(POS.get - 1).child.usedsize >= MIN_SIZE + 1) {
@@ -93,7 +93,7 @@ class BtreeRec() extends BtreeBase() {
     if (R.get.leaf) {
       lookup_leaf(KEY, R.get, ADR, FOUND)
     } else {
-      lookup_rec(KEY, R.get, ADR.get, FOUND.get)
+      lookup_rec(KEY, R, ADR, FOUND)
     }
   }
   private def lookup_rec(KEY: key, R: Ref[znode], ADR: Ref[address], FOUND: Ref[Boolean]) {
@@ -102,7 +102,7 @@ class BtreeRec() extends BtreeBase() {
       if (! <(R.get.zbranches(I + 1).key, KEY)) {
         check_branch(R.get, I)
         val RTEMP = new Ref[znode](R.get.zbranches(I).child)
-        lookup_impl(KEY, RTEMP.get, ADR.get, FOUND.get)
+        lookup_impl(KEY, RTEMP, ADR, FOUND)
         R.get.zbranches(I).child = RTEMP.get
       }
       I = I + 1
@@ -110,7 +110,7 @@ class BtreeRec() extends BtreeBase() {
     if (<(R.get.zbranches(I).key, KEY) && I == R.get.usedsize) {
       check_branch(R.get, I)
       val RTEMP = new Ref[znode](R.get.zbranches(I).child)
-      lookup_impl(KEY, RTEMP.get, ADR.get, FOUND.get)
+      lookup_impl(KEY, RTEMP, ADR, FOUND)
       R.get.zbranches(I).child = RTEMP.get
     }
   }
