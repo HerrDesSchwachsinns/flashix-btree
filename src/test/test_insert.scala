@@ -5,6 +5,8 @@ import layers.BtreeIter
 import layers.BtreeRec
 import layers.IBtree
 
+import misc.BRANCH_SIZE
+//TODO asserts
 object TestInsert {
   def main(args: Array[String]) {
     val treeIter = new BtreeIter
@@ -17,7 +19,8 @@ object TestInsert {
     println("recursive version finished")
   }
   def test(btree: IBtree) {
-    test_insert_lookup_delete(btree)
+    test_insert_until_split(btree)
+//    test_insert_lookup_delete(btree)
   }
   def test_insert(btree: IBtree) {
     Helper.insert(btree, 1)
@@ -27,5 +30,13 @@ object TestInsert {
     println(Helper.lookup(btree, 1))
     Helper.delete(btree,1)
     println(Helper.lookup(btree, 1))
+  }
+  def test_insert_until_split(btree: IBtree) {
+    for(i <- 1 to BRANCH_SIZE + 1) {
+      Helper.insert(btree, i)
+    }
+    for(i <- 1 to BRANCH_SIZE + 1) {
+      println(Helper.lookup(btree, i))
+    }
   }
 }

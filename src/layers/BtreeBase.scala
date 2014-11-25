@@ -9,7 +9,6 @@ import helpers.scala.ArrayWrapperDeep
 import helpers.scala.ChooseNotin
 import helpers.scala.MapWrapperDeep
 import helpers.scala.Ref
-import helpers.scala.Ref.fromA
 import misc.{< => <}
 import misc.ADR_DUMMY
 import misc.BRANCH_SIZE
@@ -88,7 +87,8 @@ abstract class BtreeBase(protected var ROOT: znode, protected val FS: MapWrapper
         } else {
           assert(R.dirty)
         }
-        I = R.usedsize
+        return //TODO no return
+//        I = R.usedsize
       } else
         I = I + 1
     }
@@ -231,7 +231,7 @@ abstract class BtreeBase(protected var ROOT: znode, protected val FS: MapWrapper
   protected def check_branch(R: znode, I: Int) { //used in delete & lookup_loop
     val ZBR: zbranch = R.zbranches(I).deepCopy
     if (ZBR.child == null) {
-      val ZBR0: Ref[znode] = ZBR.child
+      val ZBR0: Ref[znode] = new Ref(ZBR.child)
       loadIndexnode(ZBR.adr, ZBR0)
       ZBR.child = ZBR0.get.deepCopy
       ZBR.child.parent = R
@@ -304,6 +304,7 @@ abstract class BtreeBase(protected var ROOT: znode, protected val FS: MapWrapper
   }
   protected def move_branches_right(R: znode, I: Int) { //used in insert_branch & move_from_left
     var J: Int = R.usedsize
+    assert (J < BRANCH_SIZE)
     while (J >= I) {
       R.zbranches(J + 1) = R.zbranches(J).deepCopy
       J = J - 1

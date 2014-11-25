@@ -5,7 +5,6 @@ import helpers.scala.Boolean._
 import helpers.scala.Boolean
 import helpers.scala.Int._
 import helpers.scala.Random._
-import layers.Btree
 import helpers.scala.MapWrapperDeep
 import datatypes.index_node
 
@@ -27,7 +26,7 @@ package object misc {
   //no key, uninit_address, no child
   def default_zbranches = {
     val array = new ArrayWrapperDeep[zbranch](BRANCH_SIZE)
-    array.fill(zbranch.mkZbranch(null,uninit_address,null))
+    array.fill(zbranch.mkZbranch(null,uninit_address,null)) //TODO
     array
   }
   /**
@@ -37,7 +36,7 @@ package object misc {
   //no parent, no next, array of branches, leaf, not dirty, initial no elem used
   def default_znode: znode = new znode(null, null, default_zbranches, true, false, 0)
   //default znode, empty map
-  def empty_Btree: Btree = new Btree(default_znode,new MapWrapperDeep[address, index_node])
+//  def empty_Btree: Btree = new Btree(default_znode,new MapWrapperDeep[address, index_node])
   /**
    * Unspecified constants
    */
@@ -56,11 +55,11 @@ package object misc {
   import helpers.scala.Int.plus1
   import helpers.scala.Set.Ø
   import helpers.scala.Set.++
-  def <(param0: key, param1: key): Boolean = { param0.hashCode < param1.hashCode }
+  def <(param0: key, param1: key): Boolean = { param0.ino < param1.ino }
   //TODO read about ordering in scala
   //remove this one
-  implicit object keyOrdering extends Ordering[key] {
-    def compare(key0: key, key1: key): Int = key1.hashCode - key0.hashCode
+  implicit object keyOrdering extends Ordering[key] { //TODO implement for all key types
+    def compare(key0: key, key1: key): Int = key0.ino - key1.ino
   }
 
   val keyOrderingTest = implicitly[Ordering[key]]

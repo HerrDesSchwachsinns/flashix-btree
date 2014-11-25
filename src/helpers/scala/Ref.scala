@@ -10,6 +10,6 @@ class Ref[A](var get : A) {
 object Ref {
   // NOTE: sollte im generierten Code nicht benötigt werden, verhindert Compilerfehler bei inkonsistent generiertem Code
   // implicit def toA[A](r : Ref[A]) : A = r.get
-  implicit def fromA[A](x : A) = new Ref(x)
+//  implicit def fromA[A](x : A) = new Ref(x)
   def empty[A] = new Ref[A](null.asInstanceOf[A])
 }

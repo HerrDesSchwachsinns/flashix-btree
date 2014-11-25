@@ -5,7 +5,6 @@ import datatypes.key
 import datatypes.znode
 import helpers.scala.MapWrapperDeep
 import helpers.scala.Ref
-import helpers.scala.Ref.fromA
 import misc.{< => <}
 import misc.ADR_DUMMY
 import misc.BRANCH_SIZE
