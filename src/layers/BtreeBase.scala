@@ -20,14 +20,11 @@ import datatypes.key.inodekey
 
 
 abstract class BtreeBase(protected var ROOT: znode, protected val FS: MapWrapperDeep[address, index_node]) extends IBtree {
-  ROOT.zbranches(0).key = inodekey(0)
-  ROOT.zbranches(0).adr = 0
-  ROOT.usedsize = 1;
   /**
    * default initialization this is an empty Btree
    */
   def this() = this(default_znode, new MapWrapperDeep[address, index_node])
-
+		  override def toString() = ROOT.toString 
   /*
    * **************
    * commit
@@ -95,7 +92,10 @@ abstract class BtreeBase(protected var ROOT: znode, protected val FS: MapWrapper
       } else
         I = I + 1
     }
-    //TODO if rightmost insert here
+    if(I == R.usedsize) { //bug102 special case if insertion at the end
+      R.zbranches(I) = zbranch.mkZbranch(KEY, ADR, CHILD)
+        R.usedsize = R.usedsize + 1
+    }
   }
   protected def split(R: znode, CHILD: znode, KEY: key, ADR: address, R0: Ref[znode]) { //used in insert
     val R1: znode = misc.default_znode

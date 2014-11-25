@@ -14,7 +14,7 @@ sealed abstract class MapWrapperBase[K, T] protected (var map: Map[K, T] = Map[K
   def update(key : K, value : T) : Unit = map += Tuple2(key, value)
   def += (keyvalue : (K, T)) : Unit = map += keyvalue
   def isEmpty: Boolean = map.isEmpty
-
+  override def toString() = map.toString
   /* replace the actual map */
   def := (wrapper: MapWrapperBase[K, T]) {
     map = wrapper.map
