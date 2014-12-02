@@ -13,7 +13,7 @@ import misc._
 
 final case class znode(var parent: znode, var next: znode, var zbranches: ArrayWrapperDeep[zbranch], var leaf: Boolean, var dirty: Boolean, var usedsize: Int) extends DeepCopyable[znode] {
   override def deepCopy(): znode = znode(parent, next, zbranches.deepCopy, leaf, dirty, usedsize)
-  override def toString() = "znode" + zbranches.array.map(b => b.key).mkString("(", ",", ")")
+  override def toString() = "znode" + zbranches.array.take(usedsize).map(b => b.key).mkString("(", ",", ")")
 }
 
 object znode {

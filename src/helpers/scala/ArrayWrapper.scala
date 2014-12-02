@@ -70,7 +70,8 @@ final class ArrayWrapperDeep[T <: DeepCopyable[T] : ClassTag](_array: Array[T]) 
   override def deepCopy(): ArrayWrapperDeep[T] = {
     val newArray = new Array[T](array.length)
     for (i <- 0 until array.length)
-      newArray(i) = array(i).deepCopy
+      if(array(i) != null)
+    	  newArray(i) = array(i).deepCopy
     new ArrayWrapperDeep(newArray)
   }
 }

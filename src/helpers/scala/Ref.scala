@@ -4,7 +4,7 @@ class Ref[A](var get : A) {
   def := (x : A) { set(x) }
   def set(x : A) { get = x }
   override def equals(other : Any) = (get == other) 
-  override def toString() = "Ref(" + get.toString +")"
+  override def toString() = "Ref(" + (if(get!=null)get.toString else "null") +")"
 }
 
 object Ref {

@@ -1,4 +1,5 @@
 import datatypes.key
+import datatypes.key.inodekey
 import datatypes.znode
 import helpers.scala.ArrayWrapperDeep
 import helpers.scala.Boolean._
@@ -19,14 +20,14 @@ package object misc {
    * implementation restrictions:
    * * uninterpreted sorts must be immutable
    */
-
+  
   type address = Int
   def uninit_address(): address = ADR_DUMMY
-  
+  def default_key(): key = inodekey(uninit_address)
   //no key, uninit_address, no child
   def default_zbranches = {
     val array = new ArrayWrapperDeep[zbranch](BRANCH_SIZE)
-    array.fill(zbranch.mkZbranch(null,uninit_address,null)) //TODO
+    array.fill(zbranch.mkZbranch(default_key(),uninit_address,null)) //TODO
     array
   }
   /**

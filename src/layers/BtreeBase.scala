@@ -9,21 +9,21 @@ import helpers.scala.ArrayWrapperDeep
 import helpers.scala.ChooseNotin
 import helpers.scala.MapWrapperDeep
 import helpers.scala.Ref
-import misc.{< => <}
+import misc.{ < => < }
 import misc.ADR_DUMMY
 import misc.BRANCH_SIZE
 import misc.MIN_SIZE
 import misc.address
 import misc.default_znode
 import datatypes.key.inodekey
-
+import misc.default_zbranches
 
 abstract class BtreeBase(protected var ROOT: znode, protected val FS: MapWrapperDeep[address, index_node]) extends IBtree {
   /**
    * default initialization this is an empty Btree
    */
   def this() = this(default_znode, new MapWrapperDeep[address, index_node])
-		  override def toString() = ROOT.toString 
+  override def toString() = ROOT.toString
   /*
    * **************
    * commit
@@ -88,13 +88,13 @@ abstract class BtreeBase(protected var ROOT: znode, protected val FS: MapWrapper
           assert(R.dirty)
         }
         return //TODO no return
-//        I = R.usedsize
+        //        I = R.usedsize
       } else
         I = I + 1
     }
-    if(I == R.usedsize) { //bug102 special case if insertion at the end
+    if (I == R.usedsize) { //bug102 special case if insertion at the end
       R.zbranches(I) = zbranch.mkZbranch(KEY, ADR, CHILD)
-        R.usedsize = R.usedsize + 1
+      R.usedsize = R.usedsize + 1
     }
   }
   protected def split(R: znode, CHILD: znode, KEY: key, ADR: address, R0: Ref[znode]) { //used in insert
@@ -106,14 +106,21 @@ abstract class BtreeBase(protected var ROOT: znode, protected val FS: MapWrapper
     R.next = R0.get
     R0.get.dirty = true
     R.dirty = true
+    //ms=min_size , bs=branch_size
     if (! <(R.zbranches(MIN_SIZE).key, KEY)) {
+      //_1_
+      //[2,3,4,5,6,7,8,9] ->
+      //[_1_,2,3,4] & [5,6,7,8,9]
       split_branch(R, R0.get, MIN_SIZE)
       insert_branch(R, CHILD, KEY, ADR)
     } else {
+      //_9_
+      //[1,2,3,4,5,6,7,8] ->
+      //[1,2,3,4,5] & [6,7,8,_9_]
       split_branch(R, R0.get, MIN_SIZE + 1)
       insert_branch(R0.get, CHILD, KEY, ADR)
     }
-    if (R.parent == null) {
+    if (R.parent == null) { //R is root
       val ROOT: znode = misc.default_znode
       ROOT.leaf = false
       ROOT.parent = null
@@ -122,7 +129,7 @@ abstract class BtreeBase(protected var ROOT: znode, protected val FS: MapWrapper
       ROOT.usedsize = 2
       R0.get.parent = ROOT
       R.parent = ROOT
-      val ZBRAR: ArrayWrapperDeep[zbranch] = new ArrayWrapperDeep[zbranch](BRANCH_SIZE)
+      val ZBRAR: ArrayWrapperDeep[zbranch] = default_zbranches
       ZBRAR(0) = zbranch.mkZbranch(KEY, ADR_DUMMY, R)
       ZBRAR(1) = zbranch.mkZbranch(R0.get.zbranches(0).key, ADR_DUMMY, R0.get)
       ROOT.zbranches = ZBRAR.deepCopy
@@ -130,7 +137,7 @@ abstract class BtreeBase(protected var ROOT: znode, protected val FS: MapWrapper
   }
   private def split_branch(R: znode, R0: znode, I: Int) {
     var K: Int = 0
-    val ZBRAR: ArrayWrapperDeep[zbranch] = new ArrayWrapperDeep[zbranch](BRANCH_SIZE)
+    val ZBRAR: ArrayWrapperDeep[zbranch] = default_zbranches
     var J: Int = I
     while (J < BRANCH_SIZE) {
       ZBRAR(K) = R.zbranches(J).deepCopy
@@ -304,7 +311,7 @@ abstract class BtreeBase(protected var ROOT: znode, protected val FS: MapWrapper
   }
   protected def move_branches_right(R: znode, I: Int) { //used in insert_branch & move_from_left
     var J: Int = R.usedsize
-    assert (J < BRANCH_SIZE)
+    assert(J < BRANCH_SIZE)
     while (J >= I) {
       R.zbranches(J + 1) = R.zbranches(J).deepCopy
       J = J - 1
