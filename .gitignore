@@ -3,3 +3,9 @@
 
 !.gitignore
 Thumbs.db
+*.aux
+*.bbl
+*.blg
+*.log
+*.dvi
+*.pdf

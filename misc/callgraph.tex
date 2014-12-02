@@ -1,0 +1,57 @@
+%compile with lualatex
+\documentclass[convert]{standalone}
+
+\usepackage{underscore,xcolor}
+\usepackage{tikz}
+\usetikzlibrary{graphdrawing}
+\usetikzlibrary{graphs,fit,positioning}
+\usegdlibrary{trees,layered}
+
+\begin{document}
+\begin{tikzpicture}
+	\tikzset{ttf/.style={font=\tt}}
+	\graph[layered layout,nodes={ttf}] {
+		"insert" -> {
+			"lookup_loop",
+			"insert_loop" -> {
+				"insert_branch" -> {"move_branches_right","mark_dirty"},
+				"split" -> {
+					"split_branch",
+					"insert_branch"-> {"move_branches_right","mark_dirty"}
+				}
+			}
+		}
+	};
+	\draw[->] (insert@LOW LINE@loop) -- (insert@LOW LINE@branch);
+		
+	\node[draw,fit=(insert) (lookup@LOW LINE@loop) (insert@LOW LINE@loop)] (btreeiter) {};
+	\node[below right,color=blue] at(btreeiter.north west) {BtreeIter};
+	
+	\node[draw,fit=(mark@LOW LINE@dirty)(move@LOW LINE@branches@LOW LINE@right) (insert@LOW LINE@branch) (split@LOW LINE@branch) (split)] (btreebase) {};
+	\node[below right,color=blue] at(btreebase.north west) {BtreeBase};
+\end{tikzpicture}
+%\newline
+\begin{tikzpicture}
+\tikzset{ttf/.style={font=\tt}}
+\graph[layered layout,nodes={ttf}] {
+	"insert" -> {
+		"lookup_impl",
+		"insert_rec" -> {
+			"insert_branch" -> {"move_branches_right","mark_dirty"},
+			"split" -> {
+				"split_branch",
+				"insert_branch"-> {"move_branches_right","mark_dirty"}
+			}
+		}
+	}
+};
+	\draw[->] (insert@LOW LINE@rec) -- (insert@LOW LINE@branch);
+	\path[->] (insert@LOW LINE@rec) edge[loop right] (insert@LOW LINE@rec);
+	
+	\node[draw,fit=(insert) (lookup@LOW LINE@impl) (insert@LOW LINE@rec)] (btreerec) {};
+	\node[below right,color=blue] at(btreerec.north west) {BtreeRec};
+	
+	\node[draw,fit=(mark@LOW LINE@dirty)(move@LOW LINE@branches@LOW LINE@right) (insert@LOW LINE@branch) (split@LOW LINE@branch) (split)] (btreebase) {};
+	\node[below right,color=blue] at(btreebase.north west) {BtreeBase};
+\end{tikzpicture}
+\end{document}
