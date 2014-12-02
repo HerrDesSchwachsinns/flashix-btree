@@ -129,7 +129,7 @@ abstract class BtreeBase(protected var ROOT: znode, protected val FS: MapWrapper
       ROOT.usedsize = 2
       R0.get.parent = ROOT
       R.parent = ROOT
-      val ZBRAR: ArrayWrapperDeep[zbranch] = default_zbranches
+      val ZBRAR: ArrayWrapperDeep[zbranch] = default_zbranches //bug 104
       ZBRAR(0) = zbranch.mkZbranch(KEY, ADR_DUMMY, R)
       ZBRAR(1) = zbranch.mkZbranch(R0.get.zbranches(0).key, ADR_DUMMY, R0.get)
       ROOT.zbranches = ZBRAR.deepCopy
@@ -137,7 +137,7 @@ abstract class BtreeBase(protected var ROOT: znode, protected val FS: MapWrapper
   }
   private def split_branch(R: znode, R0: znode, I: Int) {
     var K: Int = 0
-    val ZBRAR: ArrayWrapperDeep[zbranch] = default_zbranches
+    val ZBRAR: ArrayWrapperDeep[zbranch] = default_zbranches //bug 104
     var J: Int = I
     while (J < BRANCH_SIZE) {
       ZBRAR(K) = R.zbranches(J).deepCopy
