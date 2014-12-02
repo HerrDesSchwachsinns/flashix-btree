@@ -98,6 +98,8 @@ abstract class BtreeBase(protected var ROOT: znode, protected val FS: MapWrapper
     }
   }
   protected def split(R: znode, CHILD: znode, KEY: key, ADR: address, R0: Ref[znode]) { //used in insert
+    //copy parameters from R to R0 (everything but branches)
+    //and mark dirty
     val R1: znode = misc.default_znode
     R0 := R1
     R0.get.leaf = R.leaf
@@ -106,7 +108,8 @@ abstract class BtreeBase(protected var ROOT: znode, protected val FS: MapWrapper
     R.next = R0.get
     R0.get.dirty = true
     R.dirty = true
-    //ms=min_size , bs=branch_size
+    //split branch into two halves R being left, R0 being right
+    //and insert node into corresponding half
     if (! <(R.zbranches(MIN_SIZE).key, KEY)) {
       //_1_
       //[2,3,4,5,6,7,8,9] ->
@@ -120,7 +123,7 @@ abstract class BtreeBase(protected var ROOT: znode, protected val FS: MapWrapper
       split_branch(R, R0.get, MIN_SIZE + 1)
       insert_branch(R0.get, CHILD, KEY, ADR)
     }
-    if (R.parent == null) { //R is root
+    if (R.parent == null) { //R is root -> create new root, insert previously split nodes
       val ROOT: znode = misc.default_znode
       ROOT.leaf = false
       ROOT.parent = null

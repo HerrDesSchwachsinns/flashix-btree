@@ -9,10 +9,10 @@ import misc.BRANCH_SIZE
 //TODO asserts
 object TestInsert {
   def main(args: Array[String]) {
-    val treeIter = new BtreeIter
-    println("iterative version started")
-    test(treeIter)
-    println("iterative version finished")
+//    val treeIter = new BtreeIter
+//    println("iterative version started")
+//    test(treeIter)
+//    println("iterative version finished")
     println("recursive version started")
     val treeRec = new BtreeRec
     test(treeRec)

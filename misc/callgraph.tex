@@ -46,7 +46,7 @@
 	}
 };
 	\draw[->] (insert@LOW LINE@rec) -- (insert@LOW LINE@branch);
-	\path[->] (insert@LOW LINE@rec) edge[loop right] (insert@LOW LINE@rec);
+	\path[->] (insert@LOW LINE@rec) edge[loop right] node[right]{!leaf} (insert@LOW LINE@rec);
 	
 	\node[draw,fit=(insert) (lookup@LOW LINE@impl) (insert@LOW LINE@rec)] (btreerec) {};
 	\node[below right,color=blue] at(btreerec.north west) {BtreeRec};
