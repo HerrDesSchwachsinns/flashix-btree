@@ -5,7 +5,7 @@ import datatypes.key
 import datatypes.znode
 import helpers.scala.MapWrapperDeep
 import helpers.scala.Ref
-import misc.{< => <}
+import misc.orderedKey
 import misc.ADR_DUMMY
 import misc.BRANCH_SIZE
 import misc.MIN_SIZE
@@ -100,7 +100,7 @@ class BtreeRec() extends BtreeBase() {
   private def lookup_rec(KEY: key, R: Ref[znode], ADR: Ref[address], FOUND: Ref[Boolean]) {
     var I: Int = 0
     while (I < R.get.usedsize - 1 && FOUND.get != true) {
-      if (! <(R.get.zbranches(I + 1).key, KEY)) {
+      if (R.get.zbranches(I + 1).key >= KEY) {
         check_branch(R.get, I)
         val RTEMP = new Ref[znode](R.get.zbranches(I).child)
         lookup_impl(KEY, RTEMP, ADR, FOUND)
@@ -108,7 +108,7 @@ class BtreeRec() extends BtreeBase() {
       }
       I = I + 1
     }
-    if (<(R.get.zbranches(I).key, KEY) && I == R.get.usedsize) {
+    if (R.get.zbranches(I).key < KEY && I == R.get.usedsize) {
       check_branch(R.get, I)
       val RTEMP = new Ref[znode](R.get.zbranches(I).child)
       lookup_impl(KEY, RTEMP, ADR, FOUND)

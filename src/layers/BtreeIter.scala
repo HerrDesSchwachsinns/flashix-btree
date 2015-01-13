@@ -10,7 +10,7 @@ import misc.address
 import misc.ADR_DUMMY
 import misc.BRANCH_SIZE
 import misc.MIN_SIZE
-import misc.<
+import misc.orderedKey
 import misc.uninit_address
 class BtreeIter() extends BtreeBase() {
   override def insert(KEY: key, ADR: address) {
@@ -40,7 +40,7 @@ class BtreeIter() extends BtreeBase() {
     FOUND := false
     var I: Int = 0
     while (!R.get.leaf) {
-      if (I == R.get.usedsize || ! <(R.get.zbranches(I + 1).key, KEY)) {
+      if (I == R.get.usedsize || R.get.zbranches(I + 1).key >= KEY) {
         check_branch(R.get, I)
         R := R.get.zbranches(I).child
         I = 0

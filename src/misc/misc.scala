@@ -57,12 +57,29 @@ package object misc {
   import helpers.scala.Int.plus1
   import helpers.scala.Set.Ø
   import helpers.scala.Set.++
-  def <(param0: key, param1: key): Boolean = { param0.ino < param1.ino }
-  //TODO read about ordering in scala
-  //remove this one
-  implicit object keyOrdering extends Ordering[key] { //TODO implement for all key types
-    def compare(key0: key, key1: key): Int = key0.ino - key1.ino
-  }
+  import datatypes.key.datakey
+  import datatypes.key.dentrykey
+  import datatypes.key.inodekey
+//  def <(param0: key, param1: key): Boolean = { param0.ino < param1.ino }
+//  implicit object keyOrdering extends Ordering[key] { //TODO implement for all key types
+//    def compare(key0: key, key1: key): Int = key0.ino - key1.ino
+//  }
+//  val keyOrderingTest = implicitly[Ordering[key]]
+  //inodekey > dentrykey > datakey
+  implicit class orderedKey(k: key) extends Ordered[key] {
 
-  val keyOrderingTest = implicitly[Ordering[key]]
+    override def compare(that: key) = (this.k, that) match {
+      case (inodekey(ino0), inodekey(ino1)) => implicitly[Ordering[Int]].compare(ino0, ino1)
+      case (inodekey(ino), _) => 1
+      case (_, inodekey(ino)) => -1
+      case (dentrykey(ino0, name0), dentrykey(ino1, name1)) =>
+        implicitly[Ordering[(Int, String)]]
+          .compare((ino0, name0), (ino1, name1))
+      case (dentrykey(ino, name), _) => 1
+      case (_, dentrykey(ino, name)) => -1
+      case (datakey(ino0, part0), datakey(ino1, part1)) =>
+        implicitly[Ordering[(Int, Int)]]
+          .compare((ino0, part0), (ino1, part1))
+    }
+  }
 }

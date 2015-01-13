@@ -9,7 +9,7 @@ import helpers.scala.ArrayWrapperDeep
 import helpers.scala.ChooseNotin
 import helpers.scala.MapWrapperDeep
 import helpers.scala.Ref
-import misc.{ < => < }
+import misc.orderedKey
 import misc.ADR_DUMMY
 import misc.BRANCH_SIZE
 import misc.MIN_SIZE
@@ -79,7 +79,7 @@ abstract class BtreeBase(protected var ROOT: znode, protected val FS: MapWrapper
   protected def insert_branch(R: znode, CHILD: znode, KEY: key, ADR: address) { //used in insert & split
     var I: Int = if (R.leaf) 0 else 1 //dummy node
     while (I < R.usedsize) {
-      if (<(KEY, R.zbranches(I).key)) {
+      if (KEY < R.zbranches(I).key) {
         move_branches_right(R, I)
         R.zbranches(I) = zbranch.mkZbranch(KEY, ADR, CHILD)
         R.usedsize = R.usedsize + 1
@@ -111,7 +111,7 @@ abstract class BtreeBase(protected var ROOT: znode, protected val FS: MapWrapper
     R.dirty = true
     //split branch into two halves R being left, R0 being right
     //and insert node into corresponding half
-    if (! <(R.zbranches(MIN_SIZE).key, KEY)) {
+    if (R.zbranches(MIN_SIZE).key >= KEY) {
       //<1>
       //[2,3,4,5,6,7,8,9] ->
       //[<1>,2,3,4] & [5,6,7,8,9]

@@ -1,22 +1,23 @@
 package test
 
 import datatypes.key.inodekey
+import misc.orderedKey
 import layers.BtreeIter
 import layers.BtreeRec
 import layers.IBtree
-
 import misc.BRANCH_SIZE
+import datatypes.key.datakey
 //TODO asserts
 object TestInsert {
   def main(args: Array[String]) {
-    val treeIter = new BtreeIter
-    println("iterative version started")
-    test(treeIter)
-    println("iterative version finished")
-//    println("recursive version started")
-//    val treeRec = new BtreeRec
-//    test(treeRec)
-//    println("recursive version finished")
+//    println("iterative version started")
+//    val treeIter = new BtreeIter
+//    test(treeIter)
+//    println("iterative version finished")
+    println("recursive version started")
+    val treeRec = new BtreeRec
+    test(treeRec)
+    println("recursive version finished")
   }
   def test(btree: IBtree) {
     test_insert_until_split(btree)
