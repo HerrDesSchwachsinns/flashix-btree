@@ -327,7 +327,8 @@ abstract class BtreeBase(protected var ROOT: znode, protected val FS: MapWrapper
     right.parent = ROOT
     val ZBRAR: ArrayWrapperDeep[zbranch] = default_zbranches //bug 104
     ZBRAR(0) = zbranch.mkZbranch(KEY_DUMMY, ADR_DUMMY, left)
-    ZBRAR(1) = zbranch.mkZbranch(right.zbranches(0).key, ADR_DUMMY, right)
+    val KEY = if(right.leaf) left.zbranches(left.usedsize - 1).key else right.zbranches(0).key
+    ZBRAR(1) = zbranch.mkZbranch(KEY, ADR_DUMMY, right)
     ROOT.zbranches = ZBRAR.deepCopy
     this.ROOT = ROOT //bug 105 TODO
   }

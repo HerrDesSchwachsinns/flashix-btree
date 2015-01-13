@@ -10,14 +10,14 @@ import datatypes.key.datakey
 //TODO asserts
 object TestInsert {
   def main(args: Array[String]) {
-//    println("iterative version started")
-//    val treeIter = new BtreeIter
-//    test(treeIter)
-//    println("iterative version finished")
-    println("recursive version started")
-    val treeRec = new BtreeRec
-    test(treeRec)
-    println("recursive version finished")
+    println("iterative version started")
+    val treeIter = new BtreeIter
+    test(treeIter)
+    println("iterative version finished")
+//    println("recursive version started")
+//    val treeRec = new BtreeRec
+//    test(treeRec)
+//    println("recursive version finished")
   }
   def test(btree: IBtree) {
     test_insert_until_split(btree)

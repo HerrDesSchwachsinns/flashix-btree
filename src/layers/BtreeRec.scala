@@ -108,7 +108,7 @@ class BtreeRec() extends BtreeBase() {
       }
       I = I + 1
     }
-    if (R.get.zbranches(I).key < KEY && I == R.get.usedsize) {
+    if (R.get.zbranches(I).key < KEY && I+1 == R.get.usedsize) { //bug 106
       check_branch(R.get, I)
       val RTEMP = new Ref[znode](R.get.zbranches(I).child)
       lookup_impl(KEY, RTEMP, ADR, FOUND)

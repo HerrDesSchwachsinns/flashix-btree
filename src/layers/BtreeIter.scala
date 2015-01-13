@@ -40,7 +40,7 @@ class BtreeIter() extends BtreeBase() {
     FOUND := false
     var I: Int = 0
     while (!R.get.leaf) {
-      if (I == R.get.usedsize || R.get.zbranches(I + 1).key >= KEY) {
+      if (I+1 == R.get.usedsize || R.get.zbranches(I + 1).key >= KEY) { //bug 106
         check_branch(R.get, I)
         R := R.get.zbranches(I).child
         I = 0
