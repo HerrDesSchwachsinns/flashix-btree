@@ -9,6 +9,7 @@ import misc.address
 
 final case class zbranch(var key: key, var adr: address, var child: znode) extends DeepCopyable[zbranch] {
   override def deepCopy(): zbranch = zbranch(key, adr, child)
+  override def toString(): String = "zbranch("+key+","+child+")"
 }
 
 object zbranch {

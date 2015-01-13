@@ -8,6 +8,7 @@ import helpers.scala.InvalidSelector
 import helpers.scala.InvalidSelectorUpdate
 import helpers.scala.Random._
 import helpers.scala.String._
+import misc.KEY_DUMMY
 
 sealed abstract class key {
   def ino : Int = throw new InvalidSelector("ino undefined")
@@ -28,7 +29,7 @@ object key {
    */
   final case class inodekey(override val ino : Int) extends key {
     override def updated_ino(__x : Int) : inodekey = copy(ino = __x)
-    override def toString() = "i" + ino.toString
+    override def toString() = if(this==KEY_DUMMY) "DUMMY" else "i" + ino.toString
   }
   final case class datakey(override val ino : Int, override val part : Int) extends key {
     override def updated_ino(__x : Int) : datakey = copy(ino = __x)

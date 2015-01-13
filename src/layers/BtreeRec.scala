@@ -48,6 +48,8 @@ class BtreeRec() extends BtreeBase() {
         } else {
           insert_rec(R.parent, R0.get, R0.get.zbranches(0).key, ADR_DUMMY)
         }
+      } else { //R is root
+        new_root(R,R0.get);
       }
     }
   }

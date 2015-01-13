@@ -63,9 +63,10 @@ class BtreeIter() extends BtreeBase() {
       } else {
         val R0 = new Ref[znode](null)
         split(R, CHILD, KEY, ADR, R0)
-        if (R.parent == null)
+        if (R.parent == null) {
+          new_root(R, R0.get)
           DONE = true
-        else {
+        } else {
           if (R0.get.leaf)
             KEY = R.zbranches(R.usedsize - 1).key
           else

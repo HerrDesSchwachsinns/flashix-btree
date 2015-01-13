@@ -13,6 +13,7 @@ import misc.{ < => < }
 import misc.ADR_DUMMY
 import misc.BRANCH_SIZE
 import misc.MIN_SIZE
+import misc.KEY_DUMMY
 import misc.address
 import misc.default_znode
 import datatypes.key.inodekey
@@ -111,31 +112,17 @@ abstract class BtreeBase(protected var ROOT: znode, protected val FS: MapWrapper
     //split branch into two halves R being left, R0 being right
     //and insert node into corresponding half
     if (! <(R.zbranches(MIN_SIZE).key, KEY)) {
-      //_1_
+      //<1>
       //[2,3,4,5,6,7,8,9] ->
-      //[_1_,2,3,4] & [5,6,7,8,9]
+      //[<1>,2,3,4] & [5,6,7,8,9]
       split_branch(R, R0.get, MIN_SIZE)
       insert_branch(R, CHILD, KEY, ADR)
     } else {
-      //_9_
-      //[1,2,3,4,5,6,7,8] ->
-      //[1,2,3,4,5] & [6,7,8,_9_]
+      //<9>
+      //R: [1,2,3,4,5,6,7,8] ->
+      //R:[1,2,3,4,5] & R0:[6,7,8,<9>]
       split_branch(R, R0.get, MIN_SIZE + 1)
       insert_branch(R0.get, CHILD, KEY, ADR)
-    }
-    if (R.parent == null) { //R is root -> create new root, insert previously split nodes
-      val ROOT: znode = misc.default_znode
-      ROOT.leaf = false
-      ROOT.parent = null
-      ROOT.next = null
-      ROOT.dirty = true
-      ROOT.usedsize = 2
-      R0.get.parent = ROOT
-      R.parent = ROOT
-      val ZBRAR: ArrayWrapperDeep[zbranch] = default_zbranches //bug 104
-      ZBRAR(0) = zbranch.mkZbranch(KEY, ADR_DUMMY, R)
-      ZBRAR(1) = zbranch.mkZbranch(R0.get.zbranches(0).key, ADR_DUMMY, R0.get)
-      ROOT.zbranches = ZBRAR.deepCopy
     }
   }
   private def split_branch(R: znode, R0: znode, I: Int) {
@@ -319,5 +306,29 @@ abstract class BtreeBase(protected var ROOT: znode, protected val FS: MapWrapper
       R.zbranches(J + 1) = R.zbranches(J).deepCopy
       J = J - 1
     }
+  }
+  
+  
+  /**
+   * Utility
+   */
+  
+  /**
+   * create new root znode with left and right as childs
+   */
+  protected def new_root(left:znode,right:znode) {
+    val ROOT: znode = misc.default_znode
+    ROOT.leaf = false
+    ROOT.parent = null
+    ROOT.next = null
+    ROOT.dirty = true
+    ROOT.usedsize = 2
+    left.parent = ROOT
+    right.parent = ROOT
+    val ZBRAR: ArrayWrapperDeep[zbranch] = default_zbranches //bug 104
+    ZBRAR(0) = zbranch.mkZbranch(KEY_DUMMY, ADR_DUMMY, left)
+    ZBRAR(1) = zbranch.mkZbranch(right.zbranches(0).key, ADR_DUMMY, right)
+    ROOT.zbranches = ZBRAR.deepCopy
+    this.ROOT = ROOT //bug 105 TODO
   }
 }
