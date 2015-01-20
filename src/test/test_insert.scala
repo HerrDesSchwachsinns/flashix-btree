@@ -33,11 +33,13 @@ object TestInsert {
     println(Helper.lookup(btree, 1))
   }
   def test_insert_until_split(btree: IBtree) {
-    for(i <- 1 to BRANCH_SIZE + 1) {
+    val end = 8*BRANCH_SIZE + 1
+    for(i <- 1 to end) {
       Helper.insert(btree, i)
+      println(btree)
     }
-    for(i <- 1 to BRANCH_SIZE + 1) {
-      println(Helper.lookup(btree, i))
+    for(i <- 1 to end) {
+      println(i + ":" + Helper.lookup(btree, i))
     }
   }
 }

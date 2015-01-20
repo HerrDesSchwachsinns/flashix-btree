@@ -3,13 +3,18 @@ package test
 import datatypes.zbranch
 import helpers.scala.ArrayWrapperDeep
 import datatypes.key.inodekey
+import layers.BtreeIter
+import layers.drawBtree
+import java.io.PrintWriter
+import java.io.FileWriter
+import java.io.BufferedWriter
 
 object OtherTests {
   def main(args: Array[String]) {
-    val a = new ArrayWrapperDeep[zbranch](8)
-    for (i <- 0 to 7)
-      a(i) = zbranch(inodekey(i), i, null)
-    val b = a.deepCopy
-    println("BLA")
+    val btree = new BtreeIter
+    for(i <- 1 to 50) {
+      Helper.insert(btree,i)
+    }
+    btree.draw("test.tex")
   }
 }
