@@ -44,7 +44,7 @@ package object misc {
   def ADR_DUMMY: address = 0xDEADBEEF
   def KEY_DUMMY: key = inodekey(0xDEADBEFF)
   def BRANCH_SIZE: Int = 2 * MIN_SIZE //8
-  def MIN_SIZE: Int = 4
+  def MIN_SIZE: Int = 2 //TODO; default is 4; 2 is for testing only
 
   /**
    * Unspecified functions

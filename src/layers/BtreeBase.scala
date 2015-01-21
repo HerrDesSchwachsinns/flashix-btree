@@ -25,7 +25,7 @@ abstract class BtreeBase(protected var ROOT: znode, protected val FS: MapWrapper
    */
   def this() = this(default_znode, new MapWrapperDeep[address, index_node])
   override def toString() = ROOT.toString
-  def draw(file:String) {
+  def draw(file:String) = {
     drawBtree.file = file
     drawBtree(ROOT)
   }
