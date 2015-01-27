@@ -49,7 +49,7 @@ class BtreeRec() extends BtreeBase() {
           insert_rec(R.parent, R0.get, R0.get.zbranches(0).key, ADR_DUMMY)
         }
       } else { //R is root
-        new_root(R,R0.get);
+        new_root(R, R0.get);
       }
     }
   }
@@ -104,15 +104,15 @@ class BtreeRec() extends BtreeBase() {
         check_branch(R.get, I)
         val RTEMP = new Ref[znode](R.get.zbranches(I).child)
         lookup_impl(KEY, RTEMP, ADR, FOUND)
-        R.get.zbranches(I).child = RTEMP.get
+        R := RTEMP.get //bug 107
       }
       I = I + 1
     }
-    if (R.get.zbranches(I).key < KEY && I+1 == R.get.usedsize) { //bug 106
+    if (R.get.zbranches(I).key < KEY && I + 1 == R.get.usedsize) { //bug 106
       check_branch(R.get, I)
       val RTEMP = new Ref[znode](R.get.zbranches(I).child)
       lookup_impl(KEY, RTEMP, ADR, FOUND)
-      R.get.zbranches(I).child = RTEMP.get
+      R := RTEMP.get //bug 107
     }
   }
 }

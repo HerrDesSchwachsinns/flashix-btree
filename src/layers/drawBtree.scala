@@ -42,6 +42,7 @@ object drawBtree {
    */
   private def printNode(out: PrintWriter, node: znode, recDepth: Int, lower: key, upper: key) {
     out.print(intend(recDepth))
+    if(node==null){out.println("node{null}");return}
     if (node.parent == null) out.print("\\") //root node begins with backslash
     out.println("node{")
     printBranches(out, node, recDepth, lower, upper)
@@ -53,6 +54,7 @@ object drawBtree {
    * check branch for errors and return corresponding color code
    */
   private def checkBranch(node: znode, i: Int, lower: key, upper: key): String = {
+    if (node.zbranches(i) == null) { error = true; return "null-pointer" }
     val key = node.zbranches(i).key
     if (lower != null && key <= lower) { error = true; return "less-than-left" }
     if (upper != null && key > upper) { error = true; return "greater-than-right" }
@@ -99,6 +101,7 @@ object drawBtree {
     |\definecolor{good}{rgb}{0,0,0}
     |\definecolor{greater-than-right}{HTML}{CC0000}
     |\definecolor{less-than-left}{HTML}{FF6600}
+    |\definecolor{null-pointer}{HTML}{0000CC}
     |\tikzstyle{bplus}=[rectangle split,
     |                   rectangle split horizontal,
     |                   rectangle split parts=12,
