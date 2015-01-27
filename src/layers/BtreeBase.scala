@@ -232,6 +232,7 @@ abstract class BtreeBase(protected var ROOT: znode, protected val FS: MapWrapper
    * checks if i-th branch already loaded if not it is loaded
    */
   protected def check_branch(R: znode, I: Int) { //used in delete & lookup_loop
+    return //TODO delete: this is only for debugging purpose
     val ZBR: zbranch = R.zbranches(I).deepCopy
     if (ZBR.child == null) {
       val ZBR0: Ref[znode] = new Ref(ZBR.child)
@@ -306,8 +307,8 @@ abstract class BtreeBase(protected var ROOT: znode, protected val FS: MapWrapper
     }
   }
   protected def move_branches_right(R: znode, I: Int) { //used in insert_branch & move_from_left
-    var J: Int = R.usedsize
-    assert(J < BRANCH_SIZE)
+    var J: Int = R.usedsize-1 //bug 109
+    assert(J < BRANCH_SIZE-1)
     while (J >= I) {
       R.zbranches(J + 1) = R.zbranches(J).deepCopy
       J = J - 1

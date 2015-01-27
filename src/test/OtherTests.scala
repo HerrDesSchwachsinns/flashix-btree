@@ -12,26 +12,17 @@ import java.io.BufferedWriter
 import java.io.InputStreamReader
 import java.io.BufferedReader
 import misc.Exec
+import scala.util.Random
 
 object OtherTests {
   def main(args: Array[String]) {
-    val start = 1
-    val end = 50
-    val btree = new BtreeRec
-    var i = 1
-    while (i < start) { Helper.insert(btree, i); i += 1 }
-    drawBtree.file = "test.tex"
-    Exec(Array("rm", "-f", "drawings/pdf/*"))
-    Exec(Array("rm", "-f", "drawings/png/*"))
-    while (i <= end) {
-      Helper.insert(btree, i)
-      if (!btree.draw("test.tex")) {
-        println(s"ERROR at $i")
-      }
-      Exec(Array("cp", "test.pdf", s"drawings/pdf/$i.pdf"))
-      Exec(Array("C:/Program Files/ImageMagick-7.0.0-Q16/convert.exe", "-density", "600x600", s"drawings/pdf/$i.pdf", "-quality", "90", "-resize", "1080x800", s"drawings/png/$i.png"))
-
-      i += 1
+    val tree = new BtreeRec
+//    val randomVals = List.fill(40)(Random.nextInt(100)).distinct
+    val randomVals = List(51, 78, 8, 55, 96, 23, 92, 33, 36, 44, 45, 98, 87, 57, 52, 86, 80, 35, 28, 43, 42, 10, 47, 88, 22, 77, 40, 24, 61, 2, 37, 31, 67, 68, 85, 26)
+    println(randomVals)
+    for(i <- randomVals) {
+      Helper.insert(tree,i)
+      tree.draw("test.tex")
     }
   }
 }
