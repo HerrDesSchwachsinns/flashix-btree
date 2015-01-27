@@ -42,7 +42,7 @@ class BtreeRec() extends BtreeBase() {
     } else {
       val R0 = new Ref[znode](null)
       split(R, CHILD, KEY, ADR, R0)
-      if (R.parent != null) {
+      if (R.parent != null) { //is not root
         if (R0.get.leaf) {
           insert_rec(R.parent, R0.get, R.zbranches(R.usedsize - 1).key, ADR_DUMMY)
         } else {

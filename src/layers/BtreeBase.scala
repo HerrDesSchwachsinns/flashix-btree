@@ -91,6 +91,7 @@ abstract class BtreeBase(protected var ROOT: znode, protected val FS: MapWrapper
           mark_dirty(R)
         } else {
           assert(R.dirty)
+          CHILD.parent = R //bug 108
         }
         return //TODO no return
         //        I = R.usedsize
@@ -100,6 +101,7 @@ abstract class BtreeBase(protected var ROOT: znode, protected val FS: MapWrapper
     if (I == R.usedsize) { //bug102 special case if insertion at the end
       R.zbranches(I) = zbranch.mkZbranch(KEY, ADR, CHILD)
       R.usedsize = R.usedsize + 1
+      if(!R.leaf) CHILD.parent = R //bug 108
     }
   }
   protected def split(R: znode, CHILD: znode, KEY: key, ADR: address, R0: Ref[znode]) { //used in insert

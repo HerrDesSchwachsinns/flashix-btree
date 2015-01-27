@@ -16,7 +16,7 @@ import misc.Exec
 object OtherTests {
   def main(args: Array[String]) {
     val start = 1
-    val end = 20
+    val end = 50
     val btree = new BtreeRec
     var i = 1
     while (i < start) { Helper.insert(btree, i); i += 1 }
