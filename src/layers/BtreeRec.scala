@@ -99,12 +99,13 @@ class BtreeRec() extends BtreeBase() {
   }
   private def lookup_rec(KEY: key, R: Ref[znode], ADR: Ref[address], FOUND: Ref[Boolean]) {
     var I: Int = 0
+    //find branch where KEY is to be found (R[i] with R[i+1]>=KEY || i=usedsize-1)
     while (I < R.get.usedsize - 1 && R.get.zbranches(I + 1).key < KEY) {
       I = I + 1
     }
-    check_branch(R.get, I)
+    check_branch(R.get, I) //load if on disk and not in RAM
     val RTEMP = new Ref[znode](R.get.zbranches(I).child)
-    lookup_impl(KEY, RTEMP, ADR, FOUND)
+    lookup_impl(KEY, RTEMP, ADR, FOUND) //recursion step
     R := RTEMP.get //bug 107
   }
 }

@@ -232,7 +232,6 @@ abstract class BtreeBase(protected var ROOT: znode, protected val FS: MapWrapper
    * checks if i-th branch already loaded if not it is loaded
    */
   protected def check_branch(R: znode, I: Int) { //used in delete & lookup_loop
-    return //TODO delete: this is only for debugging purpose
     val ZBR: zbranch = R.zbranches(I).deepCopy
     if (ZBR.child == null) {
       val ZBR0: Ref[znode] = new Ref(ZBR.child)
